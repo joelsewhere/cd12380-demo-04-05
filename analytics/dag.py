@@ -14,11 +14,10 @@ WAREHOUSE_PATH        = f"s3://{S3_BUCKET}/iceberg-warehouse/transactions/"
 GLUE_ROLE_NAME        = "dev-lakehouse-glue-role"
 AWS_CONN_ID           = "aws_default"
 REGION                = "us-east-1"
-TRANSACTIONS_UPDATED  = Asset(f"s3://{S3_BUCKET}/iceberg-warehouse/transactions/")
 
 with DAG(
     dag_id="analytics",
-    schedule=TRANSACTIONS_UPDATED,
+    schedule='@daily',
     max_active_tasks=2,
 ) as dag:
 
