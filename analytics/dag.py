@@ -60,13 +60,14 @@ with DAG(
                 "--config"                    : json.dumps(payload),
                 "--datalake-formats"          : "iceberg",
                 "--enable-glue-datacatalog"   : "",
-                "--conf"                      : (
-                        "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions "
-                        "--conf spark.sql.catalog.iceberg=org.apache.iceberg.spark.SparkCatalog "
-                        "--conf spark.sql.catalog.iceberg.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog "
-                        "--conf spark.sql.catalog.iceberg.io-impl=org.apache.iceberg.aws.s3.S3FileIO "
-                        f"--conf spark.sql.catalog.iceberg.warehouse=s3://{S3_BUCKET}/iceberg-warehouse/"
-                        ),
+                "--conf": (
+                    "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions "
+                    "--conf spark.sql.catalog.iceberg=org.apache.iceberg.spark.SparkCatalog "
+                    "--conf spark.sql.catalog.iceberg.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog "
+                    "--conf spark.sql.catalog.iceberg.io-impl=org.apache.iceberg.aws.s3.S3FileIO "
+                    f"--conf spark.sql.catalog.iceberg.warehouse=s3://{S3_BUCKET}/iceberg-warehouse/ "
+                    "--conf spark.sql.defaultCatalog=iceberg"
+                ),
                 },
             create_job_kwargs   = {
                 "GlueVersion" : "4.0",
