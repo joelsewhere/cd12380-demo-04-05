@@ -14,7 +14,7 @@ TRANSACTIONS_DB = "transactions"
 ATHENA_OUTPUT   = f"s3://{S3_BUCKET}/athena-results/"
 S3_REJECTED     = f"s3://{S3_BUCKET}/staging/rejected/"
 WAREHOUSE_PATH  = f"s3://{S3_BUCKET}/iceberg-warehouse/transactions/"
-PROMOTE_SCRIPT  = CWD / "promote_transactions.py"
+PROMOTE_SCRIPT  = CWD / "glue_script.py"
 GLUE_ROLE_NAME  = "dev-lakehouse-glue-role"
 AWS_CONN_ID     = "aws_default"
 ATHENA_CONN_ID  = "aws_default"
@@ -47,18 +47,14 @@ TABLES = [
     },
 ]
 
-RAW_INGESTION_COMPLETE = Asset(f"s3://{S3_BUCKET}/iceberg-warehouse/transactions/")
+RAW_INGESTION_COMPLETE = Asset(f"s3://{S3_BUCKET}/iceberg-warehouse/raw/")
 
 SQL_DIR = Path(__file__).parent / 'sql'
 
 with DAG(
-    dag_id="dag_03_transactions",
-    description="Asset-triggered: quarantine rejected orders → promote to transactions",
+    dag_id="transactions",
     schedule=RAW_INGESTION_COMPLETE,
-    start_date=pendulum.datetime(2024, 1, 1, tz="UTC"),
     max_active_tasks=2,
-    catchup=False,
-    tags=["lakehouse", "transactions", "iceberg", "stage-3"],
 ) as dag:
 
     @task(inlets=[RAW_INGESTION_COMPLETE])
