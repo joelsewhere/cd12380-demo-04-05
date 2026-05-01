@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from airflow.sdk import DAG, Asset
+from airflow.sdk import DAG, Asset, task
 from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
