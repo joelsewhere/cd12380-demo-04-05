@@ -75,6 +75,6 @@ with DAG(
             aws_conn_id         = AWS_CONN_ID,
             )
 
-        upload(SQL, SQL_KEY) >> promote
+        upload(query, SQL_KEY) >> promote
 
 

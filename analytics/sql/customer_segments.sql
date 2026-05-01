@@ -9,8 +9,8 @@ SELECT
     ROUND(AVG(o.declared_total), 2)         AS avg_order_value,
     MIN(o.order_date)                       AS first_order_date,
     MAX(o.order_date)                       AS last_order_date
-FROM transactions.orders    o
-JOIN transactions.customers c ON o.customer_id = c.customer_id
+FROM iceberg.transactions.orders    o
+JOIN iceberg.transactions.customers c ON o.customer_id = c.customer_id
 GROUP BY
     c.customer_id, c.first_name, c.last_name,
     c.loyalty_tier, c.state, c.joined_date

@@ -8,7 +8,7 @@ SELECT
     ROUND(SUM(o.declared_total), 2)                         AS total_revenue,
     ROUND(AVG(o.declared_total), 2)                         AS avg_value,
     ROUND(SUM(o.declared_total) / t.grand_total * 100, 2)   AS revenue_pct
-FROM transactions.orders o
+FROM iceberg.transactions.orders o
 CROSS JOIN totals t
 GROUP BY o.payment_method, t.grand_total
 ORDER BY total_revenue DESC
