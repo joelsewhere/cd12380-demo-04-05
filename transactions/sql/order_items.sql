@@ -1,5 +1,6 @@
 SELECT items.item_id
      , items.order_id
+     , items.product_id
      , items.quantity
      , items.unit_price
      , items.discount

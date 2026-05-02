@@ -25,25 +25,21 @@ TABLES = [
         "table": "customers",
         "partition_keys": [],
         "upsert_keys": ["customer_id"],
-        "evolve_schema": False,
     },
     {
         "table": "products",
         "partition_keys": [],
         "upsert_keys": ["product_id"],
-        "evolve_schema": False,
     },
     {
         "table": "orders",
         "partition_keys": ["order_date"],
         "upsert_keys": ["order_id"],
-        "evolve_schema": True,
     },
     {
         "table": "order_items",
         "partition_keys": ["order_date"],
         "upsert_keys": ["item_id"],
-        "evolve_schema": False,
     },
 ]
 

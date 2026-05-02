@@ -12,7 +12,6 @@ config = json.loads(args['config'])
 
 table_name = config['table']
 sql_s3_path = config['sql']
-evolve_schema = config.get('evolve_schema', False)
 upsert_keys = config['upsert_keys']
 partition_keys = config.get('partition_keys', [])
 ignore_columns = config.get('ignore_columns', [])
@@ -64,18 +63,13 @@ else:
     new_cols = set(stg_df.columns) - set(target_df.columns)
     
     if new_cols:
-        if evolve_schema:
-            for col in new_cols:
-                # Iceberg-compatible SQL type (e.g., DECIMAL(10,2))
-                col_type = stg_df.schema[col].dataType.simpleString()
-                spark.sql(f"ALTER TABLE {target_table} ADD COLUMN {col} {col_type}")
-        else:
-            # Re-filter to match target if evolution is blocked
-            stg_df = stg_df.select([c for c in stg_df.columns if c in target_df.columns])
-            stg_df.createOrReplaceTempView(unique_stg)
+        for col in new_cols:
+            # Iceberg-compatible SQL type (e.g., DECIMAL(10,2))
+            col_type = stg_df.schema[col].dataType.simpleString()
+            spark.sql(f"ALTER TABLE {target_table} ADD COLUMN {col} {col_type}")
 
     # 6. Iceberg-Optimized MERGE
-    # Inclusion of partition keys in 'on_clause' enables Partition Pruning
+    # Inclusion of partition keys in ON clause enables Partition Pruning
     on_clause = " AND ".join([f"t.{k} = s.{k}" for k in upsert_keys])
     
     spark.sql(f"""
