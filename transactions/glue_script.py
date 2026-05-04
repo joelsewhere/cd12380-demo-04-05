@@ -14,7 +14,6 @@ table_name = config['table']
 sql_s3_path = config['sql']
 upsert_keys = config['upsert_keys']
 partition_keys = config.get('partition_keys', [])
-ignore_columns = config.get('ignore_columns', [])
 
 sc = SparkContext()
 
@@ -31,9 +30,7 @@ bucket, key = sql_s3_path.replace("s3://", "").split("/", 1)
 sql_query = s3.get_object(Bucket=bucket, Key=key)['Body'].read().decode('utf-8')
 
 # 3. Create Staging & Filter
-raw_df = spark.sql(sql_query)
-# Filter ignored columns
-stg_df = raw_df.select([c for c in raw_df.columns if c not in ignore_columns])
+stg_df = spark.sql(sql_query)
 
 # Drop duplicates on upsert keys
 stg_df = stg_df.dropDuplicates(upsert_keys)
@@ -63,13 +60,14 @@ else:
     new_cols = set(stg_df.columns) - set(target_df.columns)
     
     if new_cols:
+
         for col in new_cols:
             # Iceberg-compatible SQL type (e.g., DECIMAL(10,2))
             col_type = stg_df.schema[col].dataType.simpleString()
             spark.sql(f"ALTER TABLE {target_table} ADD COLUMN {col} {col_type}")
 
     # 6. Iceberg-Optimized MERGE
-    # Inclusion of partition keys in ON clause enables Partition Pruning
+    # Inclusion of partition keys in 'on_clause' enables Partition Pruning
     on_clause = " AND ".join([f"t.{k} = s.{k}" for k in upsert_keys])
     
     spark.sql(f"""
