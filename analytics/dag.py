@@ -17,8 +17,8 @@ REGION                = "us-east-1"
 
 with DAG(
     dag_id="analytics",
-    schedule='@daily',
     max_active_tasks=2,
+    max_active_runs=1,
 ) as dag:
 
     for query in SQL.glob("*.sql"):
@@ -66,11 +66,10 @@ with DAG(
                     "--conf spark.sql.catalog.iceberg.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog "
                     "--conf spark.sql.catalog.iceberg.io-impl=org.apache.iceberg.aws.s3.S3FileIO "
                     f"--conf spark.sql.catalog.iceberg.warehouse=s3://{S3_BUCKET}/iceberg-warehouse/ "
-                    "--conf spark.sql.defaultCatalog=iceberg"
-                ),
+                    ),
                 },
             create_job_kwargs   = {
-                "GlueVersion" : "4.0",
+                "GlueVersion" : "5.0",
                 },
             wait_for_completion = True,
             aws_conn_id         = AWS_CONN_ID,
