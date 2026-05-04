@@ -1,6 +1,6 @@
 WITH totals AS (
     SELECT SUM(declared_total) AS grand_total
-    FROM transactions.orders
+    FROM iceberg.transactions.orders
 )
 SELECT
     o.payment_method,
